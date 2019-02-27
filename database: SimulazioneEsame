@@ -1,0 +1,86 @@
+Visite(IDVisita, Titolo, DurataMedia, Luogo)
+Eventi(IDEvento, Prezzo, DataEvento, KVisita)
+Gruppi(IDGruppo, OraInzio, MinPartecipanti, MaxPartecipanti, KEvento, KGuida, LinguaGruppo)
+Compone(KVisitatore, KGruppo, TipoPag, DescrizionePag, DataPag)
+Visitatori(IDVisitatore, Nome, Nazione, LinguaMadre, Email, Telefono)
+Guide(IDGuida, Nome, Sesso, DataNascita, TitoloStudio, AnnoConseguimento)
+Lingue(NomeLingua)
+Conosce(KGuidaLingua, KLinguaGuida,LivelloConoscenza)
+
+CREATE DATABASE SimulazioneEsame;
+
+USE SimulazioneEsame;
+
+CREATE TABLE Lingue (
+	NomeLingua VARCHAR(20) NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE Visite(
+	IDVisita INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	Titolo VARCHAR(20),
+	DurataMedia INT,
+	Luogo VARCHAR(20)
+);
+
+CREATE TABLE Guide(
+	IDGuida INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	Nome VARCHAR(20),
+	Cognome VARCHAR(20),
+	Sesso VARCHAR(1),
+	DataNascita DATE,
+	TitoloStudio VARCHAR(20),
+	AnnoConseguimento YEAR(4)
+);
+
+CREATE TABLE Eventi(
+	IDEvento INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	Prezzo DECIMAL(10,2),
+	DataEvento DATE,
+	KVisita INT NOT NULL,
+	FOREIGN KEY (KVisita) REFERENCES Visite(IDVisita)
+);
+
+CREATE TABLE Visitatori(
+	IDVisitatore INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	Nome VARCHAR(20),
+	Cognome VARCHAR(20),
+	Nazione VARCHAR(20),
+	LinguaMadre VARCHAR(20) NOT NULL,
+	Email VARCHAR(30),
+	Telefono VARCHAR(20),
+	Password VARCHAR(255),
+	FOREIGN KEY (LinguaVisitatore) REFERENCES Lingue(Nome)
+);
+
+CREATE TABLE Compone(
+	KVisitatore INT NOT NULL,
+	KGruppo INT NOT NULL,
+	TipoPag VARCHAR(20),
+	DescrizionePag VARCHAR(20),
+	DataPag DATE,
+	FOREIGN KEY (KVisitatore) REFERENCES Visitatori(IDVisitatore),
+	FOREIGN KEY (KGruppo) REFERENCES Gruppi(IDGruppo),
+	PRIMARY KEY (KVisitatore, KGruppo)
+);
+
+CREATE TABLE Gruppi(
+	IDGruppo INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	OraInzio TIME,
+	MinPartecipanti INT,
+	MaxPartecipanti INT,
+	KEvento INT NOT NULL,
+	KGuida INT NOT NULL,
+	LinguaGruppo VARCHAR(20),
+	FOREIGN KEY (KEvento) REFERENCES Eventi(IDEvento),
+	FOREIGN KEY (KGuida) REFERENCES Guide(IDGuida),
+	FOREIGN KEY (LinguaGruppo) REFERENCES Lingue(Nome)
+);
+
+CREATE TABLE Conosce (
+	KGuidaLingua INT NOT NULL,
+	LinguaGuida VARCHAR(20) NOT NULL,
+	LivelloConoscenza VARCHAR(20),
+	FOREIGN KEY (KGuidaLingua) REFERENCES Guide(IDGuida),
+	FOREIGN KEY (LinguaGuida) REFERENCES Lingue(NomeLingua),
+	PRIMARY KEY (KGuidaLingua, LinguaGuida)
+);
